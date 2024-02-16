@@ -3,7 +3,7 @@ package com.workintech.s18d4.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +34,7 @@ public class Customer {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Account> accounts = new ArrayList<>();
 }
