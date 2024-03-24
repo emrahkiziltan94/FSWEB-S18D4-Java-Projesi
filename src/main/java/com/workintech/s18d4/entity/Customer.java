@@ -2,11 +2,16 @@ package com.workintech.s18d4.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@EqualsAndHashCode(exclude = {"accounts"})
+@ToString(exclude = {"accounts"})
 @Data
 @NoArgsConstructor
 @Entity
@@ -34,7 +39,30 @@ public class Customer {
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
+
+    public void addAccount(Account account) {
+        accounts.add(account);
+        account.setCustomer(this);
+    }
+
+    public void removeAccount(Account account) {
+        accounts.remove(account);
+        account.setCustomer(null);
+    }
+
+    // You can also add a method to update an account if necessary
+    public void updateAccount(Account updatedAccount) {
+        for (int i = 0; i < accounts.size(); i++) {
+            Account currentAccount = accounts.get(i);
+            if (currentAccount.getId() == updatedAccount.getId()) {
+                accounts.set(i, updatedAccount);
+                updatedAccount.setCustomer(this);
+                return;
+            }
+        }
+        throw new RuntimeException("Account not found and cannot be updated");
+    }
 }

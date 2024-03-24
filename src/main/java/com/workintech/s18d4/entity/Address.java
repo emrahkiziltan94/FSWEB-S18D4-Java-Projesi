@@ -12,6 +12,8 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "address", schema = "fsweb")
 public class Address {
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
